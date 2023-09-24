@@ -2,6 +2,9 @@ import express from 'express';
 import wkhtmltopdf from 'wkhtmltopdf';
 import { PDFDocument } from 'pdf-lib';
 import fs, { promises } from 'fs';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 async function mergePDFs(pdfPaths, outputPath) {
   const mergedPdf = await PDFDocument.create();
@@ -93,4 +96,4 @@ app.get('/topdf', async function (req, res) {
 
 });
 
-app.listen(3003);
+app.listen(process.env.PORT);
