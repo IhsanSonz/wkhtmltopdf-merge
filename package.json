@@ -1,0 +1,19 @@
+{
+  "name": "wkhtmltopdf",
+  "version": "1.0.0",
+  "main": "server.js",
+  "author": "Sonz",
+  "license": "MIT",
+  "type": "module",
+  "dependencies": {
+    "express": "^4.18.2",
+    "pdf-lib": "^1.17.1",
+    "wkhtmltopdf": "^0.4.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "scripts": {
+    "dev": "nodemon server.js"
+  }
+}
