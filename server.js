@@ -3,6 +3,7 @@ import wkhtmltopdf from 'wkhtmltopdf';
 import { PDFDocument } from 'pdf-lib';
 import fs, { promises } from 'fs';
 import dotenv from 'dotenv';
+import path from 'path';
 
 dotenv.config();
 
@@ -36,6 +37,18 @@ function exportHtml(url, file, options) {
   });
 }
 
+function createDirectoryRecursive(directoryPath) {
+  const parts = directoryPath.split(path.sep);
+
+  for (let i = 1; i <= parts.length; i++) {
+    const currentPath = path.join(...parts.slice(0, i));
+
+    if (!fs.existsSync(currentPath)) {
+      fs.mkdirSync(currentPath);
+    }
+  }
+}
+
 const app = express();
 
 app.get('/', function (req, res) {
@@ -48,15 +61,21 @@ app.get('/', function (req, res) {
 app.get('/topdf', async function (req, res) {
   let d = new Date();
   let timestamp = d.toISOString();
-  const dpi = 270;
-  let options = { dpi, pageSize: 'A4' };
-  let pdfDir = 'public/pdf/';
   let response;
 
   try {
+    const dpi = 270;
+    let options = { dpi, pageSize: 'A4', printMediaType: true, ...req.query?.options };
 
     const pdfs = req.query.pdf;
     if (!pdfs) throw new Error('No PDF link provided!');
+
+    const pdfDir = req.query.pdfDir;
+    if (!pdfDir) throw new Error('No PDF Directory provided!');
+
+    if (!fs.existsSync(pdfDir)) {
+      createDirectoryRecursive(pdfDir);
+    }
 
     let pdfPaths = [];
     await Promise.all(pdfs.map(async (pdf, i) => {
